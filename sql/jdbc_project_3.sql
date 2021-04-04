@@ -116,7 +116,7 @@ procedure read_board_detail(p_board_id board.id%type,
                                 v_content out board.content%type,
                                 v_write_date out board.write_date%type
                                 );
-    function read_board_list_with_paging(p_groups_id board.groups_id%type, p_board_category_id board.board_category_id%type, p_page_number number) return sys_refcursor;
+    procedure read_board_list_with_paging(p_groups_id board.groups_id%type, p_board_category_id board.board_category_id%type, p_page_number number, board_list out sys_refcursor);
     
     function read_board_list_with_searching_and_paging(p_groups_id board.groups_id%type, 
                                                        p_board_category_id board.board_category_id%type, 
@@ -231,11 +231,10 @@ is
             rollback;
     end read_board_detail;
     
-    function read_board_list_with_paging(p_groups_id board.groups_id%type, p_board_category_id board.board_category_id%type, p_page_number number) return sys_refcursor
+    procedure read_board_list_with_paging(p_groups_id board.groups_id%type, p_board_category_id board.board_category_id%type, p_page_number number, board_list out sys_refcursor)
     is
-        board_list_cursor sys_refcursor;
     begin
-        open board_list_cursor for
+        open board_list for
             select bnum, id, title, writer_name, write_date from (
                 select * from (
                     select 
@@ -247,7 +246,6 @@ is
                     )
                 where bnum > (p_page_number-1)*5
             ) where rownum <= 5 order by bnum;
-        return board_list_cursor;
     end read_board_list_with_paging;
     
     function read_board_list_with_searching_and_paging(p_groups_id board.groups_id%type, 
