@@ -53,6 +53,8 @@ alter table groups add constraint groups_id_pk primary key(id);
 alter table groups add constraint groups_host_member_id_fk foreign key (host_member_id) references member(id);
 alter table groups add constraint groups_participate_id_unique unique(participate_id);
 
+alter table groups add member_cnt number;
+
 
 -- 그룹 인롤 테이블
 create table group_enroll(
@@ -68,8 +70,10 @@ create table group_enroll(
 -- create index group_enroll_member_id_groups_id_pk_idx on group_enroll(member_id, groups_id);
 create index group_enroll_member_id_fk_idx on group_enroll(member_id);
 create index group_enroll_groups_id_fk_idx on group_enroll(groups_id);
+create index group_enroll_date_idx on group_enroll(enroll_date);
 alter table group_enroll add constraint group_enroll_member_id_fk foreign key(member_id) references member(id);
 alter table group_enroll add constraint group_enroll_groups_id_fk foreign key(groups_id) references groups(id);
+
 
 create table board_category(
     id number,
@@ -125,3 +129,21 @@ create sequence member_sequence;
 create sequence groups_sequence;
 create sequence board_category_sequence;
 create sequence board_sequence;
+
+create or replace view groups_manage_view 
+as 
+select 
+    g.id group_id, 
+    g.name group_name,
+    g.member_cnt group_member_cnt,
+    m.id group_host_id, 
+    m.name group_host_name, 
+    bc.board_count groups_total_board_cnt  
+from groups g 
+join 
+member m 
+on g.host_member_id = m.id 
+join board_category bc 
+on g.id = bc.groups_id;
+
+create or replace synonym group_syn for groups;

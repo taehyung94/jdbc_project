@@ -178,7 +178,7 @@ is
     procedure make_group(p_member_id in member.id%type, p_groups_name in groups.name%type, p_participate_id in groups.participate_id%type) -- 그룹 생성
     is
     begin
-        insert into groups values(groups_sequence.nextval, p_member_id, p_groups_name, p_participate_id);
+        insert into groups values(groups_sequence.nextval, p_member_id, p_groups_name, p_participate_id, 1);
         commit;
     end make_group;
     

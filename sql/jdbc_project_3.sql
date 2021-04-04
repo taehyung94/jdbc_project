@@ -2,6 +2,7 @@ create or replace package groups_enroll_package -- 그룹 가입 관련 패키지
 is
     procedure signup_group(p_member_id member.id%type, p_groups_id groups.id%type);
     procedure signout_group(p_member_id member.id%type, p_groups_id groups.id%type);
+    function get_group_enroll_list_within_week(p_groups_id group_enroll.groups_id%type) return sys_refcursor;
 end;
 /
 
@@ -12,6 +13,7 @@ is
     is
     begin
         insert into group_enroll values(p_member_id, p_groups_id, sysdate);
+        update groups set member_cnt = member_cnt + 1 where id = p_groups_id;
     end;
     
     procedure signout_group(p_member_id member.id%type, p_groups_id groups.id%type)
@@ -19,10 +21,32 @@ is
     begin
         update board set writer_id = null, writer_name = '탈퇴회원' where writer_id = p_member_id;
         delete from group_enroll where member_id = p_member_id and groups_id = p_groups_id;
+        update groups set member_cnt = member_cnt -1 where id = p_groups_id;
         commit;
         exception when others then
             rollback;
     end;
+    function get_group_enroll_list_within_week(p_groups_id group_enroll.groups_id%type) return sys_refcursor
+    is
+    group_enroll_list sys_refcursor;
+    begin
+        open group_enroll_list for
+            with week_date(day) as (
+                select sysdate - 6 as day
+                from dual
+                union all
+                select day + 1 from week_date where day < sysdate
+            ) select 
+                distinct day, 
+                        decode(enroll_date, null, 0, count(*) over (partition by day)) enroll_member_cnt
+                        from week_date 
+                        left join group_enroll 
+                        on to_date(day,'YY/MM/DD') = to_date(enroll_date, 'YY/MM/DD') and group_enroll.groups_id=1 
+                        order by day desc;
+            
+        return group_enroll_list;
+    end;
+    
 end;
 /
 
