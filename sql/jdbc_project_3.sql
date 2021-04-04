@@ -54,6 +54,7 @@ create or replace package board_category_package
 is
     procedure make_board_category(p_groups_id in board_category.groups_id%type, p_name in board_category.name%type);
     procedure get_board_category_list(p_groups_id board_category.groups_id%type, v_board_category_list out sys_refcursor);
+    function get_board_category_count(p_groups_id board_category.groups_id%type, p_board_category_id board_category.id%type) return number;
 end;
 /
 
@@ -65,6 +66,8 @@ is
         insert into board_category values(board_category_sequence.nextval, p_groups_id, p_name, 0);
     end make_board_category;
     
+    
+    
     procedure get_board_category_list(p_groups_id board_category.groups_id%type, v_board_category_list out sys_refcursor)
     is
     begin
@@ -72,6 +75,17 @@ is
         for
         select * from board_category where groups_id = p_groups_id;
     end get_board_category_list;
+    
+    function get_board_category_count(p_groups_id board_category.groups_id%type, p_board_category_id board_category.id%type) return number
+    is
+        category_count number;
+    begin
+        select count(*) into category_count
+        from
+        board_category
+        where id = p_board_category_id and groups_id = p_groups_id;
+        return category_count;
+    end;
 end;
 /
 
