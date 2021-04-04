@@ -1,12 +1,19 @@
+
+exec board_category_package.make_board_category(1,'ป๙วร');
+select * from board_category;
+select * from group_enroll;
+select * from groups;
 select * from member;
 select * from board;
-exec board_package.write_board(142, 121, 61, 'test', 'test');
+exec groups_enroll_package.signup_group(2,1);
+exec groups_enroll_package.signout_group(2,1);
+exec board_package.write_board(2, 1, 2, 'test', 'test');
 delete from member where id = 142;
 exec member_package.member_signup('bobo4', 'bobo', 'test');
 exec member_package.member_information_change(21 ,'test2', 'test2');
 select * from board_category;
 select * from groups;
-exec group_package.make_group(162, 'testgroup', '0112');
+exec group_package.make_group(1, 'testgroup', '0112');
 
 select * from groups;
 
@@ -45,3 +52,14 @@ select * from group_enroll;
 exec board_package.read_board_list_with_searching_and_paging(101,41,1,'content','its test');
 select board_package.read_board_list_with_searching_and_paging(101,41,1,'content','its test') from dual;
 exec board_package.test_dynamic_query(101,41,1,'content','its');
+
+
+create table testtable(
+    a number primary key
+);
+
+create table testfk(
+    b number references testtable(a)
+);
+
+insert into testtable values(1);

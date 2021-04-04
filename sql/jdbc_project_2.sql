@@ -18,7 +18,7 @@ begin
 if inserting then
     update board_category
     set board_count = board_count + 1
-    where groups_id = :new.groups_id and id = :new.board_category_id;
+    where groups_id = :new.groups_id and name != '전체' and id = :new.board_category_id;
     update board_category
     set board_count = board_count + 1
     where groups_id = :new.groups_id and name = '전체';
@@ -26,10 +26,10 @@ if inserting then
 elsif deleting then
     update board_category
     set board_count = board_count - 1
-    where groups_id = :new.groups_id and id = :new.board_category_id;
+    where groups_id = :old.groups_id and id = :old.board_category_id;
     update board_category
     set board_count = board_count - 1
-    where groups_id = :new.groups_id and name = '전체';
+    where groups_id = :old.groups_id and name = '전체';
 end if;
 end;
 /
@@ -166,9 +166,9 @@ create or replace package body group_package
 is
     function groups_participate_id_check(p_participate_id in groups.participate_id%type) return number
     is
-        res number := 0;
+        res number;
     begin
-        select 1 into res from groups where participate_id = p_participate_id;
+        select 0 into res from groups where participate_id = p_participate_id;
         return res;
         exception
             when no_data_found then
