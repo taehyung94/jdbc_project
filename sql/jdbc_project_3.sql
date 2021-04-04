@@ -126,7 +126,7 @@ is
         member_name member.name%type;
     begin
         select name into member_name from member where id = p_member_id;
-        insert into board values(board_sequence.nextval, p_member_id, member_name, p_groups_id, p_board_category_id, p_board_title, p_board_content, sysdate);
+        insert into board values(board_sequence.nextval, p_member_id, member_name, p_groups_id, p_board_category_id, p_board_title, p_board_content, sysdate, 0);
     end write_board;
     
     procedure edit_board(p_board_id board.id%type,
@@ -174,11 +174,16 @@ is
                                 )
     is
     begin
+        update board set view_cnt = view_cnt +1 where id = p_board_id;
         select
         id, writer_id, writer_name, groups_id, board_category_id, title, content, write_date
         into v_board_id, v_writer_id, v_writer_name, v_groups_id, v_board_category_id, v_title, v_content, v_write_date
         from board 
         where id = p_board_id;
+        commit;
+        exception 
+            when others then
+            rollback;
     end read_board_detail;
     
     function read_board_list_with_paging(p_groups_id board.groups_id%type, p_board_category_id board.board_category_id%type, p_page_number number) return sys_refcursor

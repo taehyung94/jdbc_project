@@ -106,6 +106,7 @@ alter table board add constraint board_id_pk primary key(id);
 alter table board add constraint board_writer_id_fk foreign key(writer_id) references member(id) on delete set null;
 alter table board add constraint board_groups_id_fk foreign key(groups_id) references groups(id);
 alter table board add constraint board_board_category_id_fk foreign key(board_category_id) references board_category(id);
+alter table board add view_cnt number;
 
 create sequence member_sequence;
 create sequence groups_sequence;

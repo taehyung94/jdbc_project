@@ -66,11 +66,22 @@ is
     procedure member_information_change(p_id in member.id%type ,p_name in member.name%type, p_password in member.password%type);
     procedure member_get_login_data(p_email_id member.email_id%type, v_email_id out member.email_id%type, v_password out member.password%type);
     function member_get_group_list_with_paging(p_member_id member.id%type, p_page_number number) return sys_refcursor;
+    function member_get_id(p_member_email_id member.email_id%type) return number;
+    function get_member_enroll_group_cnt(p_member_id member.id%type) return number;
 end;
 /
 
 create or replace package body member_package
 is
+    function member_get_id(p_member_email_id member.email_id%type) return number
+    is
+        v_id number;
+    begin
+        select id into v_id from member where email_id = p_member_email_id;
+        return v_id;
+    end;
+    
+    
     function get_member_enroll_group_cnt(p_member_id member.id%type) return number
     is
         cnt number := 0;
@@ -132,8 +143,8 @@ is
                     on ge.groups_id = g.id 
                     where ge.member_id = p_member_id order by ge.groups_id
                     )
-                where gnum > (p_page_number-1)*3
-            ) where rownum <= 3;
+                where gnum > (p_page_number-1)*4
+            ) where rownum <= 4;
         return group_list_cursor;
     end member_get_group_list_with_paging;
 end;
