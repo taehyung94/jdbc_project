@@ -17,7 +17,11 @@ is
     procedure signout_group(p_member_id member.id%type, p_groups_id groups.id%type)
     is
     begin
+        update board set writer_id = null, writer_name = 'Å»ÅðÈ¸¿ø' where writer_id = p_member_id;
         delete from group_enroll where member_id = p_member_id and groups_id = p_groups_id;
+        commit;
+        exception when others then
+            rollback;
     end;
 end;
 /
