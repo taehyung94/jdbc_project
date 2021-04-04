@@ -18,13 +18,16 @@ is
     
     procedure signout_group(p_member_id member.id%type, p_groups_id groups.id%type)
     is
+        host_id groups.host_member_id%type;
     begin
+        select host_member_id into host_id from groups where id = p_groups_id;
+        if host_id = p_member_id then
+            raise_application_error(-20000, 'owner can''t signout from group');
+        end if;
         update board set writer_id = null, writer_name = 'Å»ÅðÈ¸¿ø' where writer_id = p_member_id;
         delete from group_enroll where member_id = p_member_id and groups_id = p_groups_id;
         update groups set member_cnt = member_cnt -1 where id = p_groups_id;
         commit;
-        exception when others then
-            rollback;
     end;
     function get_group_enroll_list_within_week(p_groups_id group_enroll.groups_id%type) return sys_refcursor
     is
