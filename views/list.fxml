@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="listPane" prefHeight="545.0" prefWidth="780.0" styleClass="blue-bg" stylesheets="@../css/Stylesheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.ListController">
+   <children>
+   	<TableView fx:id="myTableView" layoutX="10.0" layoutY="145.0" onMouseClicked="#selectRow" prefHeight="176.0" prefWidth="760.0" styleClass="track-background" stylesheets="@../css/background.css">
+   		<columns>
+   			<TableColumn fx:id="numberColumn" text="no" />
+        	 	<TableColumn fx:id="titleColumn" prefWidth="445.0" text="title" />
+        		<TableColumn fx:id="writerColumn" prefWidth="150.0" text="writer" />
+        		<TableColumn fx:id="viewColumn" text="views" />
+            <TableColumn editable="false" prefWidth="75.0" sortable="false" text="id" visible="false" />
+    		 </columns>
+		</TableView>
+   	<Pagination fx:id="pagination" layoutX="134.0" layoutY="479.0" maxPageIndicatorCount="5" prefHeight="52.0" prefWidth="512.0" style="-fx-page-information-visible: false;" styleClass="my-pagination" />
+      <Button fx:id="newWriteBtn" layoutX="672.0" layoutY="500.0" mnemonicParsing="false" onAction="#newWrite" styleClass="get-started-btn" text="New Write" textFill="WHITE">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font></Button>
+      <Button fx:id="logoutBtn" layoutX="703.0" layoutY="32.0" mnemonicParsing="false" onAction="#logout" text="Logout">
+         <font>
+            <Font name="Arial Bold" size="13.0" />
+         </font>
+      </Button>
+      <Button fx:id="backBtn" layoutX="14.0" layoutY="24.0" mnemonicParsing="false" onAction="#backToGroupList" text="←">
+         <font>
+            <Font name="Arial Bold" size="13.0" />
+         </font>
+      </Button>
+      <Button fx:id="groupSignOutBtn" layoutX="16.0" layoutY="500.0" mnemonicParsing="false" onAction="#groupSignOut" styleClass="get-started-btn" text="Group Sign out" textFill="WHITE">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Button>
+      <ComboBox fx:id="selector" layoutX="245.0" layoutY="30.0" onAction="#choose" prefHeight="31.0" prefWidth="290.0" promptText="Select Category" />
+      <Button fx:id="addCategoryBtn" layoutX="542.0" layoutY="103.0" mnemonicParsing="false" onAction="#addCategory" text="Add Category">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Button>
+      <TextField fx:id="newCategoryName" layoutX="245.0" layoutY="101.0" prefHeight="29.0" prefWidth="290.0" />
+      <Label fx:id="currentCategoryId" layoutX="89.0" layoutY="14.0" visible="false" />
+      <TextField fx:id="search" layoutX="328.0" layoutY="373.0" prefHeight="29.0" prefWidth="367.0" />
+      <Button fx:id="searchDataBtn" layoutX="705.0" layoutY="374.0" mnemonicParsing="false" onAction="#searchData" text="Search">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Button>
+      <ComboBox fx:id="selectType" layoutX="170.0" layoutY="374.0" onAction="#select" prefHeight="25.0" prefWidth="152.0" promptText="Select Type" />
+   </children>
+</AnchorPane>
