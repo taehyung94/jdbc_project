@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.effect.DropShadow?>
+
+<AnchorPane id="AnchorPane" fx:id="container" prefHeight="545.0" prefWidth="780.0" styleClass="blue-bg" stylesheets="@../css/Stylesheet.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.CreateGroupController">
+   <children>
+      <TextField fx:id="groupName" layoutX="239.0" layoutY="226.0" prefHeight="35.0" prefWidth="300.0" promptText="Enter new Group Name" styleClass="text-field">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+         <effect>
+            <DropShadow blurType="ONE_PASS_BOX" color="#c6c0c0" height="14.83" radius="8.4575" />
+         </effect>
+      </TextField>
+      <PasswordField fx:id="groupCode" layoutX="239.0" layoutY="272.0" prefHeight="35.0" prefWidth="300.0" promptText="Enter your Participate Code">
+         <font>
+            <Font name="Arial" size="14.0" />
+         </font>
+         <effect>
+            <DropShadow blurType="ONE_PASS_BOX" color="#c6c0c0" height="14.83" radius="8.4575" />
+         </effect>
+      </PasswordField>
+      <HBox layoutX="490.0" layoutY="393.0" />
+      <Button fx:id="createGroupBtn" layoutX="368.0" layoutY="321.0" mnemonicParsing="false" onAction="#createGroup" prefHeight="35.0" prefWidth="80.0" styleClass="get-started-btn" text="Create" textFill="WHITE">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Button>
+      <Button fx:id="check" layoutX="554.0" layoutY="277.0" mnemonicParsing="false" onAction="#handleDuplicateCheck" prefHeight="26.0" prefWidth="58.0" text="Check">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Button>
+      <Label layoutX="290.0" layoutY="158.0" text="Create Group" textFill="#fcf7f7">
+         <font>
+            <Font size="31.0" />
+         </font>
+      </Label>
+      <Button fx:id="cancelBtn" layoutX="459.0" layoutY="321.0" mnemonicParsing="false" onAction="#cancel" prefHeight="35.0" prefWidth="80.0" styleClass="get-started-btn" text="Cancel" textFill="#fff9f9">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Button>
+   </children>
+</AnchorPane>
