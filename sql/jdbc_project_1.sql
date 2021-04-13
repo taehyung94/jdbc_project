@@ -38,7 +38,7 @@ alter table member add constraint member_email_id_unique unique(email_id);
 create table groups(
     id number,
     host_member_id number,
-    name varchar2(20),
+    name varchar2(60),
     participate_id varchar(4),
     constraints groups_name_nn check(name is not null),
     constraints groups_host_member_id check(host_member_id is not null),
@@ -108,8 +108,11 @@ create table board(
 )
 partition by range(groups_id)
 (
-    partition pr_board_5 values less than(5),
-    partition pr_board_10 values less than(10)
+    partition pr_board_20 values less than(20),
+    partition pr_board_40 values less than(40),
+    partition pr_board_60 values less than(60),
+    partition pr_board_80 values less than(80),
+    partition pr_board_100 values less than(100)
 );
 
 create index board_id_pk_idx on board(id);
@@ -125,10 +128,10 @@ alter table board add constraint board_groups_id_fk foreign key(groups_id) refer
 alter table board add constraint board_board_category_id_fk foreign key(board_category_id) references board_category(id);
 alter table board add view_cnt number;
 
-create sequence member_sequence;
-create sequence groups_sequence;
-create sequence board_category_sequence;
-create sequence board_sequence;
+create sequence member_sequence increment by 1 start with 1;
+create sequence groups_sequence increment by 1 start with 1;
+create sequence board_category_sequence increment by 1 start with 1;
+create sequence board_sequence increment by 1 start with 1;
 
 create or replace view groups_manage_view 
 as 
@@ -146,4 +149,4 @@ on g.host_member_id = m.id
 join board_category bc 
 on g.id = bc.groups_id;
 
-create or replace synonym group_syn for groups;
+-- create or replace synonym group_syn for groups;

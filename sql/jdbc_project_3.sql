@@ -95,6 +95,7 @@ end;
 create or replace package board_package
 is
     function board_owner_check(p_board_id board.id%type, p_member_id board.writer_id%type, p_groups_id board.groups_id%type) return number;
+    function get_board_cnt_with_category(p_groups_id board.groups_id%type, p_board_category_id board.board_category_id%type) return number;
     procedure write_board(p_member_id board.writer_id%type, 
                           p_groups_id board.groups_id%type, 
                           p_board_category_id board.board_category_id%type,
@@ -114,15 +115,20 @@ procedure read_board_detail(p_board_id board.id%type,
                                 v_board_category_id out board.board_category_id%type,
                                 v_title out board.title%type,
                                 v_content out board.content%type,
-                                v_write_date out board.write_date%type
+                                v_write_date out board.write_date%type,
+                                v_view_cnt out board.view_cnt%type
                                 );
     procedure read_board_list_with_paging(p_groups_id board.groups_id%type, p_board_category_id board.board_category_id%type, p_page_number number, board_list out sys_refcursor);
-    
+    procedure read_total_board_list_with_paging(p_groups_id board.groups_id%type, p_page_number number, total_board_list out sys_refcursor);
     function read_board_list_with_searching_and_paging(p_groups_id board.groups_id%type, 
                                                        p_board_category_id board.board_category_id%type, 
                                                        p_page_number number, 
                                                        p_kind varchar2, 
                                                        p_keyword varchar2) return sys_refcursor;
+    function read_total_board_list_with_searching_and_paging(p_groups_id board.groups_id%type, 
+                                                       p_page_number number, 
+                                                       p_kind varchar2, 
+                                                       p_keyword varchar2) return sys_refcursor;                                                   
 end;
 /
 
@@ -215,14 +221,15 @@ is
                                 v_board_category_id out board.board_category_id%type,
                                 v_title out board.title%type,
                                 v_content out board.content%type,
-                                v_write_date out board.write_date%type
+                                v_write_date out board.write_date%type,
+                                v_view_cnt out board.view_cnt%type
                                 )
     is
     begin
         update board set view_cnt = view_cnt +1 where id = p_board_id;
         select
-        id, writer_id, writer_name, groups_id, board_category_id, title, content, write_date
-        into v_board_id, v_writer_id, v_writer_name, v_groups_id, v_board_category_id, v_title, v_content, v_write_date
+        id, writer_id, writer_name, groups_id, board_category_id, title, content, write_date, view_cnt
+        into v_board_id, v_writer_id, v_writer_name, v_groups_id, v_board_category_id, v_title, v_content, v_write_date, v_view_cnt
         from board 
         where id = p_board_id;
         commit;
@@ -235,7 +242,7 @@ is
     is
     begin
         open board_list for
-            select bnum, id, title, writer_name, write_date from (
+            select bnum, id, title, writer_name, write_date, view_cnt from (
                 select * from (
                     select 
                         rownum bnum, board.*
@@ -248,6 +255,23 @@ is
             ) where rownum <= 5 order by bnum;
     end read_board_list_with_paging;
     
+    procedure read_total_board_list_with_paging(p_groups_id board.groups_id%type, p_page_number number, total_board_list out sys_refcursor)
+    is
+    begin
+        open total_board_list for 
+            select bnum, id, title, writer_name, write_date, view_cnt from (
+                select * from (
+                    select 
+                        rownum bnum, board.*
+                    from board 
+                    where 
+                    groups_id = p_groups_id
+                    order by id
+                    )
+                where bnum > (p_page_number-1)*5
+            ) where rownum <= 5 order by bnum;
+    end read_total_board_list_with_paging;
+    
     function read_board_list_with_searching_and_paging(p_groups_id board.groups_id%type, 
                                                        p_board_category_id board.board_category_id%type, 
                                                        p_page_number number, 
@@ -255,7 +279,7 @@ is
                                                        p_keyword varchar2) return sys_refcursor
     is
     board_list_cursor sys_refcursor;
-    q1 varchar2(1000) := 'select bnum, id, title, writer_name, write_date from (
+    q1 varchar2(1000) := 'select bnum, id, title, writer_name, write_date, view_cnt from (
                 select * from (
                     select 
                         rownum bnum, board.*
@@ -270,5 +294,27 @@ is
         open board_list_cursor for q1 using p_groups_id, p_board_category_id, p_page_number;
         return board_list_cursor;
     end read_board_list_with_searching_and_paging;
+    
+    function read_total_board_list_with_searching_and_paging(p_groups_id board.groups_id%type, 
+                                                       p_page_number number, 
+                                                       p_kind varchar2, 
+                                                       p_keyword varchar2) return sys_refcursor
+    is                                                   
+    total_board_list_cursor sys_refcursor;
+    q1 varchar2(1000) := 'select bnum, id, title, writer_name, write_date, view_cnt from (
+                select * from (
+                    select 
+                        rownum bnum, board.*
+                    from board 
+                    where 
+                    groups_id = :p_groups_id';
+    q2 varchar2(100) := ' order by id)
+	where bnum > (:p_page_number-1)*5) 
+	where rownum <= 5 order by bnum';
+    begin
+        q1 := q1 || ' and ' || p_kind || ' like ' || '''%' || p_keyword || '%''' || q2;
+        open total_board_list_cursor for q1 using p_groups_id, p_page_number;
+        return total_board_list_cursor;    
+    end read_total_board_list_with_searching_and_paging;
 end;
 /

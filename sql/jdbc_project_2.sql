@@ -1,4 +1,5 @@
 -- Æ®¸®°Å
+
 create or replace trigger member_update_tri
 after update on member
 for each row
